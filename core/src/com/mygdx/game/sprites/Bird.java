@@ -25,7 +25,7 @@ public class Bird {
     private Vector3 velocity;
     private Texture bird;
 
-    private Polygon birdPoly;
+    private Polygon polyBird;
 
     private float rotation;
 
@@ -46,21 +46,17 @@ public class Bird {
 
 
 //        Polygon
-        birdPoly = new Polygon(new float[]{0, 0, 0 + BIRD_WIDTH, 0, 0 + BIRD_WIDTH, 0 + BIRD_HEIGHT, 0, 0 + BIRD_HEIGHT});
-        birdPoly.setOrigin(BIRD_WIDTH / 2,
+        polyBird = new Polygon(new float[]{0, 0, 0 + BIRD_WIDTH, 0, 0 + BIRD_WIDTH, 0 + BIRD_HEIGHT, 0, 0 + BIRD_HEIGHT});
+        polyBird.setOrigin(BIRD_WIDTH / 2,
                 BIRD_HEIGHT / 2);
 
 //      Animation
         TextureRegion[][] tmp  = TextureRegion.split(bird, bird.getWidth() / FRAME_COLS, bird.getHeight() / FRAME_ROWS);
-
-
         TextureRegion[] flyingFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;
-        for (int i = 0; i < FRAME_ROWS; i++) {
-            for (int j = 0; j < FRAME_COLS; j++) {
-                flyingFrames[index++] = tmp[i][j];
+        for (int j = 0; j < FRAME_COLS; j++) {
+            flyingFrames[index++] = tmp[0][j];
             }
-        }
 
 
         animation = new Animation<TextureRegion>(0.25f, flyingFrames);
@@ -78,8 +74,8 @@ public class Bird {
         return animation;
     }
 
-    public Polygon getBirdPoly() {
-        return birdPoly;
+    public Polygon getPolyBird() {
+        return polyBird;
     }
 
 
@@ -104,10 +100,10 @@ public class Bird {
             rotation = -90;
         }
 
-        birdPoly.setRotation(rotation);
+        polyBird.setRotation(rotation);
 
 
-        birdPoly.setPosition(position.x, position.y);
+        polyBird.setPosition(position.x, position.y);
 
     }
 

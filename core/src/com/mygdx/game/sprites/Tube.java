@@ -15,8 +15,6 @@ public class Tube {
     private Vector2 posTopTube, posBotTube;
     private Random rand;
 
-    private Rectangle recTopTube, recBotTube;
-
     public Polygon getPolyTopTube() {
         return polyTopTube;
     }
@@ -39,22 +37,19 @@ public class Tube {
         posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
         posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP - botTube.getHeight());
 
-        recTopTube = new Rectangle();
-        recBotTube = new Rectangle();
-
-        recTopTube.setSize(topTube.getWidth(), topTube.getHeight());
-        recBotTube.setSize(botTube.getWidth(), botTube.getHeight());
-        recTopTube.setPosition(posTopTube.x, posTopTube.y);
-        recBotTube.setPosition(posBotTube.x, posBotTube.y);
-
 //        Polygon
 
         polyTopTube = new Polygon();
         polyBotTube = new Polygon();
 
-        polyTopTube.setVertices(new float[] {posTopTube.x, posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y + topTube.getHeight(), posTopTube.x, posTopTube.y + topTube.getHeight()});
-        polyBotTube.setVertices(new float[] {posBotTube.x, posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y + botTube.getHeight(), posBotTube.x, posBotTube.y + botTube.getHeight()});
+//        polyTopTube.setVertices(new float[] {posTopTube.x, posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y + topTube.getHeight(), posTopTube.x, posTopTube.y + topTube.getHeight()});
+//        polyBotTube.setVertices(new float[] {posBotTube.x, posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y + botTube.getHeight(), posBotTube.x, posBotTube.y + botTube.getHeight()});
 
+        polyTopTube.setVertices(new float[] {0, 0, 0 + topTube.getWidth(), 0, 0 + topTube.getWidth(), 0 + topTube.getHeight(), 0, 0 + topTube.getHeight()});
+        polyBotTube.setVertices(new float[] {0, 0, 0 + botTube.getWidth(), 0, 0 + botTube.getWidth(), 0 + botTube.getHeight(), 0, 0+ botTube.getHeight()});
+
+        polyTopTube.setPosition(posTopTube.x, posTopTube.y);
+        polyBotTube.setPosition(posBotTube.x, posBotTube.y);
 
     }
 
@@ -74,24 +69,19 @@ public class Tube {
         return posBotTube;
     }
 
-    public Rectangle getRecTopTube() {
-        return recTopTube;
-    }
 
-    public Rectangle getRecBotTube() {
-        return recBotTube;
-    }
 
 
     public void reposition(float x) {
         posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
         posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP - botTube.getHeight());
 
-//        recTopTube.setPosition(posTopTube.x, posTopTube.y);
-//        recBotTube.setPosition(posBotTube.x, posBotTube.y);
 
-        polyTopTube.setVertices(new float[] {posTopTube.x, posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y + topTube.getHeight(), posTopTube.x, posTopTube.y + topTube.getHeight()});
-        polyBotTube.setVertices(new float[] {posBotTube.x, posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y + botTube.getHeight(), posBotTube.x, posBotTube.y + botTube.getHeight()});
+
+//        polyTopTube.setVertices(new float[] {posTopTube.x, posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y, posTopTube.x + topTube.getWidth(), posTopTube.y + topTube.getHeight(), posTopTube.x, posTopTube.y + topTube.getHeight()});
+//        polyBotTube.setVertices(new float[] {posBotTube.x, posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y + botTube.getHeight(), posBotTube.x, posBotTube.y + botTube.getHeight()});
+        polyTopTube.setPosition(posTopTube.x, posTopTube.y);
+        polyBotTube.setPosition(posBotTube.x, posBotTube.y);
 
 
     }

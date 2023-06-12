@@ -1,6 +1,7 @@
 package com.mygdx.game.sprites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,6 +27,7 @@ public class Bird {
     private Texture bird;
 
     private Polygon polyBird;
+    private Sound jumpSound;
 
     private float rotation;
 
@@ -42,13 +44,14 @@ public class Bird {
         bird = new Texture("flyanimation.png");
         rotation = 0;
 
-
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 
 
 //        Polygon
         polyBird = new Polygon(new float[]{0, 0, 0 + BIRD_WIDTH, 0, 0 + BIRD_WIDTH, 0 + BIRD_HEIGHT, 0, 0 + BIRD_HEIGHT});
         polyBird.setOrigin(BIRD_WIDTH / 2,
                 BIRD_HEIGHT / 2);
+        polyBird.setPosition(position.x, position.y);
 
 //      Animation
         TextureRegion[][] tmp  = TextureRegion.split(bird, bird.getWidth() / FRAME_COLS, bird.getHeight() / FRAME_ROWS);
@@ -82,6 +85,7 @@ public class Bird {
 
 
     public void update(float dt) {
+
         velocity.add(0, GRAVITY, 0);
         velocity.scl(dt);
         position.add(MOVEMENT * dt, velocity.y, 0);
@@ -90,7 +94,6 @@ public class Bird {
             position.y = 0;
         }
         rotation = MathUtils.lerp(rotation, velocity.y * 0.3f, 0.1f);
-        System.out.println(rotation);
 
 
         if (rotation >= 50) {
@@ -108,6 +111,7 @@ public class Bird {
     }
 
     public void jump() {
+        jumpSound.play();
         rotation = MathUtils.lerp(rotation, 40, 0.3f);
         velocity.y = 250;
 

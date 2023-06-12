@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class Tube {
     private static final int FLUCTUATION = 130;
-    private static final int TUBE_GAP = 100;
+    protected static final int TUBE_GAP_Y = 100;
     private static final int LOWEST_OPENING = 120;
     private Texture topTube, botTube;
     private Vector2 posTopTube, posBotTube;
@@ -25,17 +25,13 @@ public class Tube {
 
     private Polygon polyTopTube, polyBotTube;
 
-
-
-
-
     public Tube(float x) {
         topTube = new Texture("toptube.png");
         botTube = new Texture("bottomtube.png");
         rand = new Random();
 
-        posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
-        posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP - botTube.getHeight());
+        posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP_Y + LOWEST_OPENING);
+        posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP_Y - botTube.getHeight());
 
 //        Polygon
 
@@ -73,8 +69,8 @@ public class Tube {
 
 
     public void reposition(float x) {
-        posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP + LOWEST_OPENING);
-        posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP - botTube.getHeight());
+        posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP_Y + LOWEST_OPENING);
+        posBotTube = new Vector2(x, posTopTube.y - TUBE_GAP_Y - botTube.getHeight());
 
 
 

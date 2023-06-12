@@ -13,7 +13,7 @@ public class FlappyDemo extends ApplicationAdapter {
 	public static final int HEIGHT = 700;
 
 
-	public static final String TITLE = "Flappy Bird";
+	public static final String TITLE = "Barrel Bird";
 	private SpriteBatch batch;
 	private GameStateManager gsm;
 

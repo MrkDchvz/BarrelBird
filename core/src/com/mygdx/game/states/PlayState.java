@@ -45,6 +45,9 @@ public class PlayState extends State {
     protected Texture background;
     protected Array<Tube> tubes;
     protected Array<Coin> coins;
+
+    protected  TextureRegion pauseTexture;
+    protected  TextureRegion resumeTexture;
     protected TextureRegionDrawable pause;
 //    protected TextureRegionDrawable pausePressed;
     protected TextureRegionDrawable resume;
@@ -97,14 +100,21 @@ public class PlayState extends State {
 
         }
 
+        // ===Font Variables===
+
+
        // ====Texture Variables====
         // Background Texture
         background = new Texture("background_sample.png");
         // Pause Button Texture
-        pause = new TextureRegionDrawable(new TextureRegion(new Texture("pause.png")));
-        pause.setMinSize(50, 50);
+        pauseTexture = new TextureRegion(new Texture("pause.png"));
+        pause = new TextureRegionDrawable(pauseTexture);
+        pause.setMinSize(pauseTexture.getRegionWidth() * 2, pauseTexture.getRegionHeight() * 2);
+
         // Resume Button Texture
-        resume = new TextureRegionDrawable(new TextureRegion(new Texture("resume.png")));
+        resumeTexture = new TextureRegion(new Texture("resume.png"));
+        resume = new TextureRegionDrawable(resumeTexture);
+        resume.setMinSize(resumeTexture.getRegionWidth() * 10, resumeTexture.getRegionHeight() * 10);
 
         // ====Sound Variables====
         // coin sound when it gets collected
@@ -117,24 +127,8 @@ public class PlayState extends State {
         // ====Button Variables====
         // Pause Bottom
         pauseButton = new ImageButton(pause);
-
         // ====Action Variables====
         // Sets the image of pauseButton to pause Texture
-        Action pauseAction = new Action() {
-            @Override
-            public boolean act(float delta) {
-                pauseButton.getStyle().imageUp = pause;
-                return true;
-            }
-        };
-        // Sets the image of resumeButton to resume Texture
-        Action resumeAction = new Action() {
-            @Override
-            public boolean act(float delta) {
-                pauseButton.getStyle().imageUp = resume;
-                return true;
-            }
-        };
 
         //Input Elements
         pauseButton.addListener(new ClickListener() {
@@ -145,10 +139,13 @@ public class PlayState extends State {
                     isPaused = true;
                     System.out.println("pause");
                     pauseButton.getStyle().imageUp = resume;
+                    pauseButton.setSize(resumeTexture.getRegionWidth() * 0.5f, resumeTexture.getRegionHeight() * 0.5f);
                 } else {
                     isPaused = false;
                     System.out.println("unpause");
                     pauseButton.getStyle().imageUp = pause;
+                    pauseButton.setSize(pauseTexture.getRegionWidth() * 2, pauseTexture.getRegionHeight() * 2);
+
                 }
 
                 pauseSound.play();
@@ -194,7 +191,7 @@ public class PlayState extends State {
         stage.act(dt);
         if (isPaused) {
             overlayAlpha = 0.5f;
-            pauseButton.setPosition((FlappyDemo.WIDTH / 2) - (pauseButton.getWidth() / 2), cam.viewportHeight + pauseButton.getHeight());
+            pauseButton.setPosition((FlappyDemo.WIDTH / 2) - (pauseButton.getWidth() / 2), cam.viewportHeight);
         }
         else {
             overlayAlpha = 0f;

@@ -10,6 +10,8 @@ public class Score {
 
    private GlyphLayout text;
 
+
+
     public BitmapFont getFont() {
         return font;
     }
@@ -21,11 +23,14 @@ public class Score {
         return text;
     }
 
+
+
     public Score() {
         font = new BitmapFont(Gdx.files.internal("font.fnt"));
         score = 0;
         text = new GlyphLayout();
         text.setText(font, score + "");
+
     }
 
     public void increment() {

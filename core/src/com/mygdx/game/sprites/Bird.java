@@ -16,7 +16,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Bird {
     private static final int GRAVITY = -15;
-    private static final int MOVEMENT = 100;
+
+    private static final float SPEED_INCREMENT = 100;
+    private static final float MAX_SPEED = 300;
+
     private static final int FRAME_COLS = 6;
     private static final int FRAME_ROWS = 1;
 
@@ -24,12 +27,22 @@ public class Bird {
     private static final int BIRD_WIDTH = 23;
     private Vector3 position;
     private Vector3 velocity;
+
+    private  float movement;
+
+
     private Texture bird;
 
     private Polygon polyBird;
     private Sound jumpSound;
 
+    private  Sound collisionSound;
+
+    private  Ground ground;
+
     private float rotation;
+
+    private boolean isIncremented;
 
 
 
@@ -43,10 +56,13 @@ public class Bird {
         velocity = new Vector3(0,0,0);
         bird = new Texture("flyanimation.png");
         rotation = 0;
+        movement = 100;
+
 
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+        collisionSound = Gdx.audio.newSound(Gdx.files.internal("collision.wav"));
 
-
+        isIncremented = false;
 //        Polygon
         polyBird = new Polygon(new float[]{0, 0, 0 + BIRD_WIDTH, 0, 0 + BIRD_WIDTH, 0 + BIRD_HEIGHT, 0, 0 + BIRD_HEIGHT});
         polyBird.setOrigin(BIRD_WIDTH / 2,
@@ -85,29 +101,20 @@ public class Bird {
 
 
     public void update(float dt) {
+        updateBirdPosition(dt, movement);
+        updateRotation();
+        updatePolyPosition();
 
-        velocity.add(0, GRAVITY, 0);
-        velocity.scl(dt);
-        position.add(MOVEMENT * dt, velocity.y, 0);
-        velocity.scl(1/dt);
-        if (position.y <= 0) {
-            position.y = 0;
-        }
-        rotation = MathUtils.lerp(rotation, velocity.y * 0.3f, 0.1f);
+    }
 
+    public void fall(float dt) {
+        updateBirdPosition(dt, 0);
+        updateRotation();
+        updatePolyPosition();
+    }
 
-        if (rotation >= 50) {
-            rotation = 50;
-        }
-        if (rotation <= -90) {
-            rotation = -90;
-        }
-
-        polyBird.setRotation(rotation);
-
-
-        polyBird.setPosition(position.x, position.y);
-
+    public void collision() {
+        collisionSound.play();
     }
 
     public void jump() {
@@ -115,6 +122,41 @@ public class Bird {
         rotation = MathUtils.lerp(rotation, 40, 0.3f);
         velocity.y = 250;
 
+    }
+
+
+    public  void incrementSpeed() {
+        if (movement <= MAX_SPEED) {
+            movement += SPEED_INCREMENT;
+            System.out.println("Speed UP!");
+        }
+
+    }
+
+    public void updateBirdPosition(float dt, float movement) {
+        velocity.add(0, GRAVITY, 0);
+        velocity.scl(dt);
+        position.add(movement * dt, velocity.y, 0);
+        velocity.scl(1/dt);
+        if (position.y <= 65) {
+            position.y = 65;
+        }
+    }
+
+    public void updateRotation() {
+        rotation = MathUtils.lerp(rotation, velocity.y * 0.3f, 0.1f);
+
+        if (rotation >= 50) {
+            rotation = 50;
+        }
+        if (rotation <= -90) {
+            rotation = -90;
+        }
+        polyBird.setRotation(rotation);
+    }
+
+    public void updatePolyPosition() {
+        polyBird.setPosition(position.x, position.y);
     }
 
 

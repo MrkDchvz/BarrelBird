@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -27,14 +26,14 @@ public class Coin {
 
     public Coin(float x, float y) {
 
-        Texture coin1 = new Texture("coin_1.png");
-        Texture coin2 = new Texture("coin_2.png");
-        Texture coin3 = new Texture("coin_3.png");
-        Texture coin4 = new Texture("coin_4.png");
+        Texture coin1 = new Texture("sprites/coin/coin_1.png");
+        Texture coin2 = new Texture("sprites/coin/coin_2.png");
+        Texture coin3 = new Texture("sprites/coin/coin_3.png");
+        Texture coin4 = new Texture("sprites/coin/coin_4.png");
 
         posCoin = new Vector2(x, y);
-        coinSound = Gdx.audio.newSound(Gdx.files.internal("coin.wav"));
-        coinSoundOnTens = Gdx.audio.newSound(Gdx.files.internal("coinPlus.wav"));
+        coinSound = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.wav"));
+        coinSoundOnTens = Gdx.audio.newSound(Gdx.files.internal("sounds/coinPlus.wav"));
         polyCoin = new Polygon();
         polyCoin.setVertices(new float[] {0, 0, COIN_HEIGHT, 0, COIN_WIDTH, COIN_HEIGHT, 0, COIN_HEIGHT});
         polyCoin.setPosition(posCoin.x - (COIN_WIDTH / 2), posCoin.y - (COIN_HEIGHT / 2));

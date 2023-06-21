@@ -1,8 +1,6 @@
 package com.mygdx.game.collision;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.sprites.Bird;
@@ -10,8 +8,7 @@ import com.mygdx.game.sprites.Coin;
 import com.mygdx.game.sprites.Ground;
 import com.mygdx.game.sprites.Score;
 import com.mygdx.game.sprites.Tube;
-import com.mygdx.game.states.GameStateManager;
-import com.mygdx.game.states.MenuState;
+
 import com.mygdx.game.states.PlayState;
 
 public class Collision {
@@ -20,7 +17,7 @@ public class Collision {
     private Array<Coin> coins;
     private Array<Tube> tubes;
     private Score score;
-    private Ground ground1, ground2;
+    private Ground ground;
 
     private PlayState playState;
 
@@ -44,12 +41,10 @@ public class Collision {
 
     }
 //  Ground Collision
-    public Collision(Bird bird, Ground ground1, Ground ground2, PlayState playState) {
+    public Collision(Bird bird, Ground ground, PlayState playState) {
         this.bird = bird;
         this.playState = playState;
-        this.ground1 = ground1;
-        this.ground2 = ground2;
-
+        this.ground = ground;
         isDead = false;
 
 
@@ -66,16 +61,15 @@ public class Collision {
         if (tubes != null) {
             for (Tube tube : tubes) {
                 if (Intersector.overlapConvexPolygons(bird.getPolyBird(), tube.getPolyTopTube()) || Intersector.overlapConvexPolygons(bird.getPolyBird(), tube.getPolyBotTube())) {
-                    return true;
+                    return isDead;
                 }
             }
-            if (ground1 != null && ground2 != null) {
-                if (Intersector.overlapConvexPolygons(bird.getPolyBird(), ground1.getPolyGround()) || Intersector.overlapConvexPolygons(bird.getPolyBird(), ground2.getPolyGround())) {
-                    return true;
-                }
+            if (ground != null) {
+
+                return isDead;
             }
         }
-        return false;
+        return  isDead;
     }
     public void updateCollision() {
         if (coins != null) {
@@ -101,15 +95,12 @@ public class Collision {
                 }
             }
         }
-        if (ground1 != null || ground2 != null) {
-            if (bird.getPosition().y <= 66.0) {
+        if (ground != null) {
+            if (bird.getPosition().y <= ground.getHeight() + ground.getPosGround1().y) {
                 onCollision();
             }
-        }
-    }
 
-    public boolean isDead() {
-       return isDead;
+        }
     }
 
     public void killBird() {
@@ -117,7 +108,9 @@ public class Collision {
     }
 
     public  void onCollision() {
+//       play the crash sound when the bird collides.
         bird.collision();
+//      set the isDead to true
         killBird();
     }
 }

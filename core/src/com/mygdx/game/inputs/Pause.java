@@ -18,22 +18,23 @@ public class Pause {
     protected ImageButton imageButton;
     protected Sound pauseSound;
 
+
     protected Boolean isPaused;
 
     public Pause(boolean isPaused) {
         // Pause Button Texture
-        pauseTexture = new TextureRegion(new Texture("pause.png"));
+        pauseTexture = new TextureRegion(new Texture("ui/pause_btn.png"));
         pause = new TextureRegionDrawable(pauseTexture);
         pause.setMinSize(pauseTexture.getRegionWidth() * 2, pauseTexture.getRegionHeight() * 2);
 
         // Resume Button Texture
-        resumeTexture = new TextureRegion(new Texture("resume.png"));
+        resumeTexture = new TextureRegion(new Texture("ui/resume_btn.png"));
         resume = new TextureRegionDrawable(resumeTexture);
-        resume.setMinSize(resumeTexture.getRegionWidth() * 10, resumeTexture.getRegionHeight() * 10);
+        resume.setMinSize(resumeTexture.getRegionWidth() , resumeTexture.getRegionHeight());
 
         this.isPaused = isPaused;
 
-        pauseSound = Gdx.audio.newSound(Gdx.files.internal("pause_sound.wav"));
+        pauseSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pause_sound.wav"));
         imageButton = new ImageButton(pause);
         imageButton.addListener(new ClickListener() {
             @Override
@@ -81,7 +82,7 @@ public class Pause {
             isPaused = true;
             System.out.println("pause");
             imageButton.getStyle().imageUp = resume;
-            imageButton.setSize(resumeTexture.getRegionWidth() * 0.5f, resumeTexture.getRegionHeight() * 0.5f);
+            imageButton.setSize(resumeTexture.getRegionWidth() * 1.5f, resumeTexture.getRegionHeight() * 1.5f);
         } else {
             isPaused = false;
             System.out.println("unpause");

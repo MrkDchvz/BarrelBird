@@ -2,7 +2,6 @@ package com.mygdx.game.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
@@ -26,8 +25,8 @@ public class Tube {
     private Polygon polyTopTube, polyBotTube;
 
     public Tube(float x) {
-        topTube = new Texture("toptube.png");
-        botTube = new Texture("bottomtube.png");
+        topTube = new Texture("sprites/tube/toptube.png");
+        botTube = new Texture("sprites/tube/bottomtube.png");
         rand = new Random();
 
         posTopTube = new Vector2(x, rand.nextInt(FLUCTUATION) + TUBE_GAP_Y + LOWEST_OPENING);
@@ -65,7 +64,9 @@ public class Tube {
         return posBotTube;
     }
 
-
+    public int getTubeGapY() {
+        return TUBE_GAP_Y;
+    }
 
 
     public void reposition(float x) {

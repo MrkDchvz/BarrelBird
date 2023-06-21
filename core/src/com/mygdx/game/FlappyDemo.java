@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.states.GameStateManager;
 import com.mygdx.game.states.MenuState;
+import com.mygdx.game.states.PlayState;
 
 public class FlappyDemo extends ApplicationAdapter {
 	public static final int WIDTH = 480;
@@ -17,6 +19,9 @@ public class FlappyDemo extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private GameStateManager gsm;
 
+	private FitViewport fitViewport;
+
+
 
 	@Override
 	public void create () {
@@ -25,9 +30,10 @@ public class FlappyDemo extends ApplicationAdapter {
 		gsm.push(new MenuState(gsm));
 	}
 
+
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
+		ScreenUtils.clear(0, 0, 0, 0);
 		gsm.update(Gdx.graphics.getDeltaTime());
 		gsm.render(batch);
 

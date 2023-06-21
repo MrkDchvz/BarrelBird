@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.FlappyDemo;
 
 import java.util.Stack;
@@ -13,19 +14,14 @@ import java.util.Stack;
 
 public class MenuState extends State {
     private Texture background;
-    private Texture playBtn;
+
+
 
     public MenuState(GameStateManager gsm) {
 
         super(gsm);
         cam.setToOrtho(false ,FlappyDemo.WIDTH, FlappyDemo.HEIGHT);
-        background = new Texture(Gdx.files.internal("bg.png"));
-        playBtn = new Texture(Gdx.files.internal("playbtn.png"));
-
-       float playBtnWidth = playBtn.getWidth();
-       float playBtnHeight = playBtn.getHeight();
-
-
+        background = new Texture(Gdx.files.internal("backgrounds/background.png"));
 
     }
 
@@ -53,10 +49,12 @@ public class MenuState extends State {
         sb.end();
     }
 
+
+
     @Override
     public void dispose() {
         background.dispose();
-        playBtn.dispose();
+
 
     }
 

@@ -1,16 +1,15 @@
 package com.mygdx.game.inputs;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.audio.Sound;
 import com.mygdx.game.sprites.Bird;
 
-public class PlayStateInputHandler implements InputProcessor {
+public class Play implements InputProcessor {
     private Bird bird;
     private Pause pause;
 
     private Boolean isDead;
 
-    public PlayStateInputHandler(Bird bird, Pause pause) {
+    public Play(Bird bird, Pause pause) {
         super();
         this.bird = bird;
         this.pause = pause;

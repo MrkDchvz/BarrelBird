@@ -1,48 +1,65 @@
 package com.mygdx.game.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 public class Ground {
     private static final int Y =  -50;
 
-    private Texture ground;
+    private Texture ground1;
+    private Texture ground2;
+    private Vector2 posGround1;
+    private Vector2 posGround2;
+
+    private float height;
+    private float width;
 
 
-    private Polygon polyGround;
-    private Vector2 posGround;
+
 
 
     public Ground (float x) {
-        ground = new Texture("ground.png");
-        polyGround = new Polygon();
-        posGround = new Vector2(x, Y);
-        polyGround.setVertices(new float[] {0,0, 0 + ground.getWidth(), 0, 0 + ground.getWidth(), 0 + ground.getHeight(), 0, 0 + ground.getHeight()});
-        polyGround.setPosition(posGround.x, posGround.y);
+        ground1 = new Texture("sprites/ground/ground.png");
+        ground2 = ground1;
+        posGround1 = new Vector2(x, Y);
+        posGround2 = new Vector2(x + ground1.getWidth(), posGround1.y);
+//        height and width properties to have a general width and height
+        width = ground1.getWidth();
+        height = ground1.getHeight();
+
 
     }
 
-    public Vector2 getPosGround() {
-        return posGround;
+    public float getHeight() {
+        return height;
     }
 
-    public Texture getGround() {
-        return ground;
+    public float getWidth() {
+        return width;
     }
 
-    public Polygon getPolyGround() {
-        return polyGround;
+    public Texture getGround1() {
+        return ground1;
     }
 
-    public float[] getVertices() {
-        return polyGround.getVertices();
+    public Texture getGround2() {
+        return ground2;
     }
 
-    public void reposition(float x) {
-        posGround = new Vector2(x, Y);
-        polyGround.setPosition(posGround.x, posGround.y);
+    public Vector2 getPosGround1() {
+        return posGround1;
+    }
 
+    public Vector2 getPosGround2() {
+        return posGround2;
+    }
+
+    public void repositionGround1(float x) {
+        posGround1 = new Vector2(x, Y);
+    }
+
+    public void repositionGround2(float x) {
+        posGround2 = new Vector2(x, posGround1.y);
     }
 
 

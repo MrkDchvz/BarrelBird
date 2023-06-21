@@ -26,7 +26,7 @@ public class Score {
 
 
     public Score() {
-        font = new BitmapFont(Gdx.files.internal("font.fnt"));
+        font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
         score = 0;
         text = new GlyphLayout();
         text.setText(font, score + "");

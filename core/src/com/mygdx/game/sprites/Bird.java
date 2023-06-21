@@ -5,20 +5,19 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.Rectangle;
+
 
 
 
 public class Bird {
     private static final int GRAVITY = -15;
 
-    private static final float SPEED_INCREMENT = 100;
-    private static final float MAX_SPEED = 300;
+    private static final float SPEED_INCREMENT = 20;
+    private static final float MAX_SPEED = 250;
 
     private static final int FRAME_COLS = 6;
     private static final int FRAME_ROWS = 1;
@@ -31,14 +30,16 @@ public class Bird {
     private  float movement;
 
 
-    private Texture bird;
+    private Texture birdAlive;
+    private Texture birdDead;
 
     private Polygon polyBird;
     private Sound jumpSound;
 
     private  Sound collisionSound;
 
-    private  Ground ground;
+//    Ground level is the lowest that the bird can go
+    private float groundLevel;
 
     private float rotation;
 
@@ -46,7 +47,8 @@ public class Bird {
 
 
 
-    private Animation<TextureRegion> animation;
+    private Animation<TextureRegion> aliveAnimation;
+    private Animation<TextureRegion> deadAnimation;
 
 
 
@@ -54,13 +56,15 @@ public class Bird {
 
         position = new Vector3(x,y,0);
         velocity = new Vector3(0,0,0);
-        bird = new Texture("flyanimation.png");
+        birdAlive = new Texture("sprites/bird/alive_animation.png");
+        birdDead = new Texture("sprites/bird/dead_animation.png");
         rotation = 0;
         movement = 100;
+        groundLevel = 0;
 
 
-        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
-        collisionSound = Gdx.audio.newSound(Gdx.files.internal("collision.wav"));
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.wav"));
+        collisionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/collision.wav"));
 
         isIncremented = false;
 //        Polygon
@@ -70,28 +74,49 @@ public class Bird {
         polyBird.setPosition(position.x, position.y);
 
 //      Animation
-        TextureRegion[][] tmp  = TextureRegion.split(bird, bird.getWidth() / FRAME_COLS, bird.getHeight() / FRAME_ROWS);
-        TextureRegion[] flyingFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-        int index = 0;
-        for (int j = 0; j < FRAME_COLS; j++) {
-            flyingFrames[index++] = tmp[0][j];
+        // Alive Animation
+        Integer aliveFrameCols = 4;
+        Integer aliveFrameRows = 1;
+        TextureRegion[][] aliveTmp  = TextureRegion.split(birdAlive, birdAlive.getWidth() / aliveFrameCols, birdAlive.getHeight() / aliveFrameRows);
+        TextureRegion[] aliveFrames = new TextureRegion[aliveFrameCols * aliveFrameRows];
+        for (int i = 0, index = 0; i < aliveFrameRows; i++) {
+            for (int j = 0; j < aliveFrameCols;  j++) {
+                aliveFrames[index++] = aliveTmp[i][j];
             }
+            }
+        aliveAnimation = new Animation<TextureRegion>(0.25f, aliveFrames);
 
-
-        animation = new Animation<TextureRegion>(0.25f, flyingFrames);
+        // Dead animation
+        Integer deadFrameCols = 4;
+        Integer deadFrameRows = 1;
+        TextureRegion[][] deadTmp = TextureRegion.split(birdDead, birdDead.getWidth() /  deadFrameCols, birdDead.getHeight() / deadFrameRows);
+        TextureRegion[] deadFrames = new TextureRegion[deadFrameCols * deadFrameRows];
+        for (int i = 0, index = 0; i < deadFrameRows; i++) {
+            for (int j = 0; j < deadFrameCols; j++) {
+                deadFrames[index++] = deadTmp[i][j];
+            }
+        }
+        deadAnimation = new Animation<TextureRegion>(0.25f, deadFrames);
     }
 
 
-    public Texture getBird() {
-        return bird;
+    public Texture getBirdAlive() {
+        return birdAlive;
+    }
+    public Texture getBirdDead() {
+        return birdDead;
     }
 
     public Vector3 getPosition() {
         return position;
     }
-    public Animation<TextureRegion> getAnimation() {
-        return animation;
+    public Animation<TextureRegion> getAliveAnimation() {
+        return aliveAnimation;
     }
+    public Animation<TextureRegion> getDeadAnimation() {
+        return deadAnimation;
+    }
+
 
     public Polygon getPolyBird() {
         return polyBird;
@@ -133,13 +158,18 @@ public class Bird {
 
     }
 
+    public void setGroundLevel(float y) {
+        this.groundLevel = y;
+    }
+
+
     public void updateBirdPosition(float dt, float movement) {
         velocity.add(0, GRAVITY, 0);
         velocity.scl(dt);
         position.add(movement * dt, velocity.y, 0);
         velocity.scl(1/dt);
-        if (position.y <= 65) {
-            position.y = 65;
+        if (position.y <= groundLevel) {
+            position.y = groundLevel;
         }
     }
 

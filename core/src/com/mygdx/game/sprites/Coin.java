@@ -45,6 +45,7 @@ public class Coin {
         frames[3] = new TextureRegion(coin4);
 
         animation = new Animation<>(0.25f, frames);
+
     }
 
     // Getters
@@ -85,6 +86,16 @@ public class Coin {
         posCoin = new Vector2(x, y);
         polyCoin.setPosition(posCoin.x, posCoin.y);
     }
+
+    public void dispose() {
+        coinSound.dispose();
+        coinSoundOnTens.dispose();
+        for (TextureRegion frames: animation.getKeyFrames()) {
+            frames.getTexture().dispose();
+        }
+    }
+
+
 
 
 

@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.FlappyDemo;
 import com.mygdx.game.background.BackgroundLayer;
@@ -20,7 +23,6 @@ import com.mygdx.game.inputs.Pause;
 import com.mygdx.game.inputs.Play;
 import com.mygdx.game.sprites.Bird;
 import com.mygdx.game.sprites.Coin;
-import com.mygdx.game.sprites.Ground;
 import com.mygdx.game.sprites.Score;
 import com.mygdx.game.sprites.Tube;
 
@@ -28,6 +30,7 @@ import com.mygdx.game.sprites.Tube;
 public class PlayState extends State {
 //    Constants
     private static final float TUBE_GAP_X = 200;
+    private static final int GROUND_Y =  -50;
     private static final int TUBE_COUNT = 4;
     private static final int CAM_POS = 80;
 //    Sprites
@@ -47,7 +50,7 @@ public class PlayState extends State {
     protected Array<Coin> coins;
     protected TextureRegion coinFrame;
     // Ground Class
-    protected Ground ground;
+    protected TextureLoop ground;
     // Score Class
     protected Score score;
     // Stage for UI Elements
@@ -83,9 +86,9 @@ public class PlayState extends State {
         // ====Class Variables====
         // Bird Class
         // Ground Class
-        ground = new Ground(0);
-        bird = new Bird(50, 300);
-        bird.setGroundLevel(ground.getHeight() + ground.getPosGround1().y);
+        ground = new TextureLoop(new Texture("sprites/ground/ground.png"), 0, GROUND_Y);
+        bird = new Bird(50, 200);
+        bird.setGroundLevel(ground.getTexture1().getHeight() + ground.getPosTexture1().y);
         // Score class
         score = new Score();
 
@@ -114,11 +117,11 @@ public class PlayState extends State {
         baseBackground = new Texture("backgrounds/background.png");
         sunBackground = new Texture("backgrounds/sun.png");
         backgrounds = new Array<BackgroundLayer>();
-        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_1.png"),10f, 0));
-        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_2.png"),5f, backgrounds.get(0).getX() + 50));
-        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_3.png"),3f, backgrounds.get(1).getX() + 50));
+        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_1.png"),20f, 0));
+        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_2.png"),15f, backgrounds.get(0).getX() + 50));
+        backgrounds.add(new BackgroundLayer(new Texture("backgrounds/wind_3.png"),10f, backgrounds.get(1).getX() + 50));
 
-        treeBackground = new TextureLoop(new Texture("backgrounds/background_3.png"), 0, ground.getHeight() + ground.getPosGround1().y);
+        treeBackground = new TextureLoop(new Texture("backgrounds/background_3.png"), 0, ground.getTexture1().getHeight() + ground.getPosTexture1().y);
 
 
 
@@ -144,6 +147,7 @@ public class PlayState extends State {
         flashDuration = 0.06f;
         flashIntensity = 1f;
         // Death UI
+        deathUi = new Death();
     }
     @Override
     protected void handleInput() {
@@ -154,14 +158,16 @@ public class PlayState extends State {
 
     @Override
     public void update(float dt) {
-        if (groundCollision.isColliding() || tubeCollision.isColliding()) {
+        if (bird.isIdle()) {
+            updateIdleState(dt);
+        }
+        else if (groundCollision.isColliding() || tubeCollision.isColliding()) {
             updateDeathState(dt);
         }
         else if (pauseButton.isPaused()) {
             updatePausedState();
         } else {
             updateRunningState(dt);
-
         }
     }
 
@@ -180,21 +186,45 @@ public class PlayState extends State {
 
     @Override
     public void dispose() {
-        bird.getBirdAlive().dispose();
-        bird.getBirdDead().dispose();
-        for (Tube tube : tubes) {
-            tube.getTopTube().dispose();
-            tube.getBotTube().dispose();
+        bird.dispose();
+        score.dispose();
+        stage.dispose();
+        deathUi.dispose();
+        pauseButton.dispose();
+        baseBackground.dispose();
+        sunBackground.dispose();
+        treeBackground.dispose();
+        ground.dispose();
+        for (Coin coin : coins) {
+            coin.dispose();
         }
-
+        for (Tube tube: tubes) {
+            tube.dispose();
+        }
+        for (BackgroundLayer bg: backgrounds) {
+            bg.dispose();
+        }
     }
 
 // Update Methods
+    public void  updateIdleState(float dt) {
+        pauseButton.getImageButton().remove();
+        handleInput();
+        stage.act(dt);
+        stateTime += dt;
+        bird.idle(dt);
+        cam.position.x = cam.viewportWidth - cam.position.x;
+        updateGameElements();
+        repositionBackGround(dt);
+        cam.update();
+    }
     public void updatePausedState() {
-        pauseButton.setResumeBtnPosition();
+
+        pauseButton.getImageButton().setPosition((FlappyDemo.WIDTH / 2) - (pauseButton.getImageButton().getWidth() / 2), (FlappyDemo.HEIGHT / 2));
     }
 
     public void updateDeathState(float dt) {
+        handleInput();
         // Stops the bird from moving horizontally
         stateTime += dt;
         // Allows the bird to fall down
@@ -203,14 +233,40 @@ public class PlayState extends State {
         updateFlashEffect(dt);
 //         Removes pause button
         pauseButton.getImageButton().remove();
+        // add death ui to stage
+
+
+        float x = cam.viewportWidth - (deathUi.getTextButton().getWidth() / 2);
+        deathUi.getTextButton().setPosition(x, 10);
+        float duration = 1f; // Duration of the animation in seconds
+        float targetY = cam.viewportHeight - (deathUi.getTextButton().getHeight() / 2); // Target Y position for the button
+        float initialY = 10; // Initial Y position below the screen
+        deathUi.getTextButton().addAction(Actions.moveTo(x, targetY, duration));
+        deathUi.getTextButton().setPosition(x, initialY);
+        deathUi.getTextButton().addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                gsm.set(new PlayState(gsm));
+            }
+        });
+
+        stage.addActor(deathUi.getTextButton());
+        inputMultiplexer.addProcessor(deathUi.getTextButton().getStage());
+
 //         Removes inputs
-        Gdx.input.setInputProcessor(null);
-//         Stage Add
+        inputMultiplexer.removeProcessor(pauseButton.getImageButton().getStage());
+        inputMultiplexer.removeProcessor(inputHandler);
+
+//         Reposition Background
+        repositionBackGround(dt);
+        // add death ui
+
 
 
 
     }
     public void updateRunningState(float dt) {
+        stage.addActor(pauseButton.getImageButton());
         handleInput();
         stage.act(dt);
         stateTime += dt;
@@ -265,12 +321,12 @@ public class PlayState extends State {
     }
     public void repositionGround() {
         // Reposition the ground when ground reaches the leftmost part of the screen
-        if (cam.position.x - (cam.viewportWidth / 2) > ground.getPosGround1().x + ground.getGround1().getWidth()) {
+        if (cam.position.x - (cam.viewportWidth / 2) > ground.getPosTexture1().x + ground.getTexture1().getWidth()) {
             // set the new X position of the ground after the next ground.
-            ground.repositionGround1(ground.getPosGround2().x + ground.getGround2().getWidth());
+            ground.repositionTexture1(ground.getPosTexture2().x + ground.getTexture2().getWidth(), ground.getPosTexture1().y);
         }
-        if (cam.position.x - (cam.viewportWidth / 2) > ground.getPosGround2().x + ground.getGround2().getWidth()) {
-            ground.repositionGround2(ground.getPosGround1().x + ground.getGround2().getWidth());
+        if (cam.position.x - (cam.viewportWidth / 2) > ground.getPosTexture2().x + ground.getTexture2().getWidth()) {
+            ground.repositionTexture2(ground.getPosTexture1().x + ground.getTexture2().getWidth(), ground.getPosTexture2().y);
         }
     }
 
@@ -338,14 +394,17 @@ public class PlayState extends State {
 
     }
     public void renderBird(SpriteBatch sb) {
-        if (groundCollision.isColliding() || tubeCollision.isColliding()) {
-            birdFrame = bird.getDeadAnimation().getKeyFrame(stateTime, true);
-        } else {
-            birdFrame = bird.getAliveAnimation().getKeyFrame(stateTime, true);
-
+        if (bird.isIdle()) {
+            sb.draw(bird.getBirdIdle(), bird.getPosition().x, bird.getPosition().y, 30, 30);
         }
-
-        sb.draw(birdFrame, bird.getPosition().x, bird.getPosition().y, bird.getPolyBird().getOriginX(), bird.getPolyBird().getOriginY(), 30, 30, 1, 1, bird.getPolyBird().getRotation());
+        else {
+            if (groundCollision.isColliding() || tubeCollision.isColliding()) {
+                birdFrame = bird.getDeadAnimation().getKeyFrame(stateTime, true);
+            } else {
+                birdFrame = bird.getAliveAnimation().getKeyFrame(stateTime, true);
+            }
+            sb.draw(birdFrame, bird.getPosition().x, bird.getPosition().y, bird.getPolyBird().getOriginX(), bird.getPolyBird().getOriginY(), 30, 30, 1, 1, bird.getPolyBird().getRotation());
+        }
 
 
     }
@@ -372,8 +431,8 @@ public class PlayState extends State {
     }
 
     public void renderGround(SpriteBatch sb) {
-        sb.draw(ground.getGround1(), ground.getPosGround1().x, ground.getPosGround1().y);
-        sb.draw(ground.getGround2(), ground.getPosGround2().x, ground.getPosGround2().y);
+        sb.draw(ground.getTexture1(), ground.getPosTexture1().x, ground.getPosTexture1().y);
+        sb.draw(ground.getTexture2(), ground.getPosTexture2().x, ground.getPosTexture2().y);
     }
 
     public void renderUiElements() {

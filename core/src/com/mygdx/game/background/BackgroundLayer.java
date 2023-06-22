@@ -28,6 +28,10 @@ public class BackgroundLayer {
     public Texture getTexture() {
         return texture;
     }
+
+    public void dispose() {
+        texture.dispose();
+    }
 }
 
 

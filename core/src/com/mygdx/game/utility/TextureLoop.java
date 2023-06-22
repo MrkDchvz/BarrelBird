@@ -57,6 +57,10 @@ public class TextureLoop {
         posTexture2 = new Vector2(x, y);
     }
 
+    public void dispose() {
+        texture1.dispose();
+        texture2.dispose();
+    }
 
 
 }

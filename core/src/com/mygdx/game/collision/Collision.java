@@ -5,11 +5,11 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.sprites.Bird;
 import com.mygdx.game.sprites.Coin;
-import com.mygdx.game.sprites.Ground;
 import com.mygdx.game.sprites.Score;
 import com.mygdx.game.sprites.Tube;
 
 import com.mygdx.game.states.PlayState;
+import com.mygdx.game.utility.TextureLoop;
 
 public class Collision {
 
@@ -17,7 +17,7 @@ public class Collision {
     private Array<Coin> coins;
     private Array<Tube> tubes;
     private Score score;
-    private Ground ground;
+    private TextureLoop ground;
 
     private PlayState playState;
 
@@ -41,7 +41,7 @@ public class Collision {
 
     }
 //  Ground Collision
-    public Collision(Bird bird, Ground ground, PlayState playState) {
+    public Collision(Bird bird, TextureLoop ground, PlayState playState) {
         this.bird = bird;
         this.playState = playState;
         this.ground = ground;
@@ -96,7 +96,7 @@ public class Collision {
             }
         }
         if (ground != null) {
-            if (bird.getPosition().y <= ground.getHeight() + ground.getPosGround1().y) {
+            if (bird.getPosition().y <= ground.getTexture1().getHeight() + ground.getPosTexture1().y) {
                 onCollision();
             }
 

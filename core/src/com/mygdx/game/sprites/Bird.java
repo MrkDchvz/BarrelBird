@@ -9,8 +9,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector3;
-
-
+import com.badlogic.gdx.utils.TimeUtils;
 
 
 public class Bird {
@@ -33,6 +32,8 @@ public class Bird {
     private Texture birdAlive;
     private Texture birdDead;
 
+    private Texture birdIdle;
+
     private Polygon polyBird;
     private Sound jumpSound;
 
@@ -43,12 +44,16 @@ public class Bird {
 
     private float rotation;
 
-    private boolean isIncremented;
+    private boolean isIdle;
+
+    private float timeAccumulator;
 
 
 
     private Animation<TextureRegion> aliveAnimation;
     private Animation<TextureRegion> deadAnimation;
+
+    private Animation<TextureRegion> idleAnimation;
 
 
 
@@ -58,22 +63,24 @@ public class Bird {
         velocity = new Vector3(0,0,0);
         birdAlive = new Texture("sprites/bird/alive_animation.png");
         birdDead = new Texture("sprites/bird/dead_animation.png");
+        birdIdle = new Texture("sprites/bird/idle_animation.png");
         rotation = 0;
         movement = 100;
         groundLevel = 0;
+        isIdle = true;
+        timeAccumulator = 0;
 
 
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.wav"));
         collisionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/collision.wav"));
-
-        isIncremented = false;
-//        Polygon
+        //        Polygon
         polyBird = new Polygon(new float[]{0, 0, 0 + BIRD_WIDTH, 0, 0 + BIRD_WIDTH, 0 + BIRD_HEIGHT, 0, 0 + BIRD_HEIGHT});
         polyBird.setOrigin(BIRD_WIDTH / 2,
                 BIRD_HEIGHT / 2);
         polyBird.setPosition(position.x, position.y);
 
 //      Animation
+
         // Alive Animation
         Integer aliveFrameCols = 4;
         Integer aliveFrameRows = 1;
@@ -118,11 +125,35 @@ public class Bird {
     }
 
 
+
+    public Texture getBirdIdle() {
+        return birdIdle;
+    }
+
     public Polygon getPolyBird() {
         return polyBird;
     }
 
+    public Boolean isIdle() {return isIdle; }
 
+
+    public void idle(float dt) {
+        float idleAmplitude = 1f; // Adjust this to control the intensity of the idle motion
+        float idleFrequency = 1f; // Adjust this to control the frequency of the idle motion
+        float maxidleTime = 2f;
+        timeAccumulator += dt;
+
+
+        // Calculate the vertical displacement based on time using a sine wave
+        float idleOffset = idleAmplitude * MathUtils.sin(MathUtils.PI2 * idleFrequency * timeAccumulator);
+        position.y += idleOffset;
+        if (timeAccumulator >= maxidleTime) {
+            timeAccumulator = 0f;
+        }
+        polyBird.setPosition(position.x, position.y);
+
+
+    }
 
 
     public void update(float dt) {
@@ -137,6 +168,8 @@ public class Bird {
         updateRotation();
         updatePolyPosition();
     }
+
+
 
     public void collision() {
         collisionSound.play();
@@ -161,6 +194,8 @@ public class Bird {
     public void setGroundLevel(float y) {
         this.groundLevel = y;
     }
+
+    public void setIdle(boolean isIdle) {this.isIdle = isIdle; }
 
 
     public void updateBirdPosition(float dt, float movement) {
@@ -187,6 +222,14 @@ public class Bird {
 
     public void updatePolyPosition() {
         polyBird.setPosition(position.x, position.y);
+    }
+
+    public void dispose() {
+        birdAlive.dispose();
+        birdDead.dispose();
+        birdIdle.dispose();
+        jumpSound.dispose();
+        collisionSound.dispose();
     }
 
 

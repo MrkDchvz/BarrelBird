@@ -79,10 +79,12 @@ public class Tube {
 //        polyBotTube.setVertices(new float[] {posBotTube.x, posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y, posBotTube.x + botTube.getWidth(), posBotTube.y + botTube.getHeight(), posBotTube.x, posBotTube.y + botTube.getHeight()});
         polyTopTube.setPosition(posTopTube.x, posTopTube.y);
         polyBotTube.setPosition(posBotTube.x, posBotTube.y);
-
-
     }
 
+    public void dispose() {
+        topTube.dispose();
+        botTube.dispose();
+    }
 
 
 

@@ -38,5 +38,9 @@ public class Score {
         score++;
         text.setText(font, score + "");
     }
+
+    public void dispose() {
+        font.dispose();
+    }
 }
 

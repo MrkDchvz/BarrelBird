@@ -52,13 +52,7 @@ public class Pause {
         return resumeTexture;
     }
 
-    public TextureRegionDrawable getPause() {
-        return pause;
-    }
 
-    public TextureRegionDrawable getResume() {
-        return resume;
-    }
 
     public ImageButton getImageButton() {
         return imageButton;
@@ -92,5 +86,11 @@ public class Pause {
         }
 
         pauseSound.play();
+    }
+
+    public void dispose() {
+        pauseSound.dispose();
+        resumeTexture.getTexture().dispose();
+        pauseTexture.getTexture().dispose();
     }
 }

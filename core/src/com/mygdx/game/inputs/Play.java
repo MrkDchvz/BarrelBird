@@ -35,7 +35,10 @@ public class Play implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (isDead == true) {
+        if (bird.isIdle()) {
+            bird.setIdle(false);
+        }
+        else if (isDead == true) {
             System.out.println("Dead");
         } else if (pause.isPaused() == false) {
             bird.jump();

@@ -41,6 +41,7 @@ public class Bird {
 
 //    Ground level is the lowest that the bird can go
     private float groundLevel;
+    private float ceilingLevel;
 
     private float rotation;
 
@@ -53,7 +54,6 @@ public class Bird {
     private Animation<TextureRegion> aliveAnimation;
     private Animation<TextureRegion> deadAnimation;
 
-    private Animation<TextureRegion> idleAnimation;
 
 
 
@@ -191,8 +191,12 @@ public class Bird {
 
     }
 
-    public void setGroundLevel(float y) {
-        this.groundLevel = y;
+    public void setGroundLevel(float groundLevel) {
+        this.groundLevel = groundLevel;
+    }
+
+    public void setCeilingLevel(float ceilingLevel) {
+        this.ceilingLevel = ceilingLevel;
     }
 
     public void setIdle(boolean isIdle) {this.isIdle = isIdle; }
@@ -205,6 +209,9 @@ public class Bird {
         velocity.scl(1/dt);
         if (position.y <= groundLevel) {
             position.y = groundLevel;
+        }
+        if (position.y >= ceilingLevel) {
+            position.y = ceilingLevel;
         }
     }
 

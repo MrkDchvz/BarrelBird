@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.FlappyDemo;
 import com.mygdx.game.background.BackgroundLayer;
+import com.mygdx.game.utility.HighScoreManager;
 import com.mygdx.game.utility.TextureLoop;
 import com.mygdx.game.collision.Collision;
 import com.mygdx.game.inputs.Death;
@@ -84,20 +85,13 @@ public class PlayState extends State {
     public PlayState(GameStateManager gsm) {
         super(gsm);
         // ====Class Variables====
-        // Bird Class
-        // Ground Class
-        ground = new TextureLoop(new Texture("sprites/ground/ground.png"), 0, GROUND_Y);
-        bird = new Bird(50, 200);
-        bird.setGroundLevel(ground.getTexture1().getHeight() + ground.getPosTexture1().y);
-        // Score class
-        score = new Score();
-
-        // Tube Class
-        tubes = new Array<Tube>();
+        ground = new TextureLoop(new Texture("sprites/ground/ground.png"), 0, GROUND_Y); // Ground Class
+        score = new Score(); // Score class
+        tubes = new Array<Tube>(); // Tube Class
             // Add 4 tubes
             for (int i = 0; i < 4; i++) {
                 if (i == 0) {
-                    // Place first tube at 500
+                    // Place first tube at 500 of X axis
                     tubes.add(new Tube(500));
                 } else {
                     // add Previous tube x position and add a gap
@@ -105,8 +99,10 @@ public class PlayState extends State {
                 }
 
             }
-        // Coin Class
-        coins = new Array<Coin>();
+        bird = new Bird(50, 200); // Bird Class
+        bird.setGroundLevel(ground.getTexture1().getHeight() + ground.getPosTexture1().y); // Set ground Level
+        bird.setCeilingLevel(FlappyDemo.HEIGHT - 200); // set ceiling level offset it with 200px
+        coins = new Array<Coin>(); // Coin Class
             // Add 4 coins on the middle of the tube gaps
             for (Tube tube : tubes) {
             coins.add(new Coin(tube.getPolyTopTube().getX() + (tube.getTopTube().getWidth() / 2) ,tube.getPolyTopTube().getY() - (tube.getTubeGapY() / 2)));
@@ -148,6 +144,7 @@ public class PlayState extends State {
         flashIntensity = 1f;
         // Death UI
         deathUi = new Death();
+
     }
     @Override
     protected void handleInput() {
@@ -233,16 +230,20 @@ public class PlayState extends State {
         updateFlashEffect(dt);
 //         Removes pause button
         pauseButton.getImageButton().remove();
+        // Check for new HighScore
+        deathUi.updateHighScore(score.getScore());
+
         // add death ui to stage
-
-
         float x = cam.viewportWidth - (deathUi.getTextButton().getWidth() / 2);
         deathUi.getTextButton().setPosition(x, 10);
         float duration = 1f; // Duration of the animation in seconds
         float targetY = cam.viewportHeight - (deathUi.getTextButton().getHeight() / 2); // Target Y position for the button
         float initialY = 10; // Initial Y position below the screen
-        deathUi.getTextButton().addAction(Actions.moveTo(x, targetY, duration));
+        // TBF: ANIMATION SLIDING UP
         deathUi.getTextButton().setPosition(x, initialY);
+        deathUi.getTextButton().addAction(Actions.moveTo(x, targetY, duration));
+        stage.act(dt);
+
         deathUi.getTextButton().addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
@@ -260,9 +261,6 @@ public class PlayState extends State {
 //         Reposition Background
         repositionBackGround(dt);
         // add death ui
-
-
-
 
     }
     public void updateRunningState(float dt) {

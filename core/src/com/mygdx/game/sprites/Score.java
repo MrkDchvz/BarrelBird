@@ -3,12 +3,14 @@ package com.mygdx.game.sprites;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.mygdx.game.utility.HighScoreManager;
 
 public class Score {
     private BitmapFont font;
    private int score;
 
    private GlyphLayout text;
+
 
 
 
@@ -30,6 +32,7 @@ public class Score {
         score = 0;
         text = new GlyphLayout();
         text.setText(font, score + "");
+
 
     }
 

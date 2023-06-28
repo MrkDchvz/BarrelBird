@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.states.GameStateManager;
 import com.mygdx.game.states.MenuState;
 import com.mygdx.game.states.PlayState;
@@ -19,7 +20,9 @@ public class FlappyDemo extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private GameStateManager gsm;
 
-	private FitViewport fitViewport;
+
+
+
 
 
 
@@ -27,7 +30,7 @@ public class FlappyDemo extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		gsm = new GameStateManager();
-		gsm.push(new PlayState(gsm));
+		gsm.push(new MenuState(gsm));
 	}
 
 
@@ -37,6 +40,12 @@ public class FlappyDemo extends ApplicationAdapter {
 		gsm.update(Gdx.graphics.getDeltaTime());
 		gsm.render(batch);
 
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+		gsm.resize(width, height);
 	}
 	
 	@Override

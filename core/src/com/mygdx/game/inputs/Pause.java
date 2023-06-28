@@ -25,13 +25,12 @@ public class Pause {
         // Pause Button Texture
         pauseTexture = new TextureRegion(new Texture("ui/pause_btn.png"));
         pause = new TextureRegionDrawable(pauseTexture);
-        pause.setMinSize(pauseTexture.getRegionWidth() * 2, pauseTexture.getRegionHeight() * 2);
+        pause.setMinSize(pauseTexture.getRegionWidth(), pauseTexture.getRegionHeight());
 
         // Resume Button Texture
         resumeTexture = new TextureRegion(new Texture("ui/resume_btn.png"));
         resume = new TextureRegionDrawable(resumeTexture);
         resume.setMinSize(resumeTexture.getRegionWidth() , resumeTexture.getRegionHeight());
-
         this.isPaused = isPaused;
 
         pauseSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pause_sound.wav"));
@@ -62,26 +61,18 @@ public class Pause {
         return isPaused;
     }
 
-//    Updates the pause Button position
-    public void setPauseBtnPosition() {
-        // Subtracted to 20 as an offset to make sure that the pause button isn't in the top-right most part
-        this.getImageButton().setPosition((FlappyDemo.WIDTH - this.getImageButton().getWidth()) - 20, (FlappyDemo.HEIGHT - this.getImageButton().getHeight()) - 20);
-    }
 
-    public void setResumeBtnPosition() {
-        this.getImageButton().setPosition((FlappyDemo.WIDTH / 2) - (this.getImageButton().getWidth() / 2), (FlappyDemo.HEIGHT / 2));
-    }
     public void togglePause() {
             if (isPaused == false) {
             isPaused = true;
             System.out.println("pause");
             imageButton.getStyle().imageUp = resume;
-            imageButton.setSize(resumeTexture.getRegionWidth() * 1.5f, resumeTexture.getRegionHeight() * 1.5f);
+            imageButton.setSize(resumeTexture.getRegionWidth() * 0.5f , resumeTexture.getRegionHeight() * 0.5f );
         } else {
             isPaused = false;
             System.out.println("unpause");
             imageButton.getStyle().imageUp = pause;
-            imageButton.setSize(pauseTexture.getRegionWidth() * 2, pauseTexture.getRegionHeight() * 2);
+            imageButton.setSize(pauseTexture.getRegionWidth() , pauseTexture.getRegionHeight() );
 
         }
 

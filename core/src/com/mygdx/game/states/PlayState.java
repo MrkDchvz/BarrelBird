@@ -14,6 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.FlappyDemo;
 import com.mygdx.game.background.BackgroundLayer;
 import com.mygdx.game.utility.HighScoreManager;
@@ -78,7 +82,7 @@ public class PlayState extends State {
     // Death State UI
     private Death deathUi;
 
-
+   private Viewport viewport;
 
 
 
@@ -121,8 +125,11 @@ public class PlayState extends State {
 
 
 
+        viewport = new ExtendViewport(FlappyDemo.WIDTH / 2.0f  , FlappyDemo.HEIGHT / 2.0f , cam);
+        viewport.apply();
+        cam.setToOrtho(false, FlappyDemo.WIDTH / 2.0f, FlappyDemo.HEIGHT / 2.0f);
         // Stage for UI Elements
-        stage = new Stage();
+        stage = new Stage(viewport);
         stage.addActor(pauseButton.getImageButton());
         // InputHandlers
         inputHandler = new Play(bird, pauseButton);
@@ -132,7 +139,7 @@ public class PlayState extends State {
         inputMultiplexer.addProcessor(inputHandler);
         // Overlay Color used when pausing
         overlayColor = new Color();
-        cam.setToOrtho(false, FlappyDemo.WIDTH / 2.0f, FlappyDemo.HEIGHT / 2.0f);
+
         // Shape Renderer
         sr = new ShapeRenderer();
         // Collision Handlers
@@ -144,6 +151,14 @@ public class PlayState extends State {
         flashIntensity = 1f;
         // Death UI
         deathUi = new Death();
+        deathUi.getTextButton().addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                endGame();
+            }
+        });
+
+
 
     }
     @Override
@@ -172,6 +187,7 @@ public class PlayState extends State {
 
     @Override
     public void render(SpriteBatch sb) {
+        cam.update();
         sb.setProjectionMatrix(cam.combined);
         sr.setProjectionMatrix(cam.combined);
         renderOnPlay(sb);
@@ -179,7 +195,11 @@ public class PlayState extends State {
 
     }
 
-
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+        viewport.apply();
+    }
 
     @Override
     public void dispose() {
@@ -217,7 +237,7 @@ public class PlayState extends State {
     }
     public void updatePausedState() {
 
-        pauseButton.getImageButton().setPosition((FlappyDemo.WIDTH / 2) - (pauseButton.getImageButton().getWidth() / 2), (FlappyDemo.HEIGHT / 2));
+        pauseButton.getImageButton().setPosition(cam.position.x - (pauseButton.getImageButton().getWidth() / 2)  , (cam.viewportHeight / 2) - pauseButton.getImageButton().getHeight());
     }
 
     public void updateDeathState(float dt) {
@@ -234,24 +254,16 @@ public class PlayState extends State {
         deathUi.updateHighScore(score.getScore());
 
         // add death ui to stage
-        float x = cam.viewportWidth - (deathUi.getTextButton().getWidth() / 2);
-        deathUi.getTextButton().setPosition(x, 10);
-        float duration = 1f; // Duration of the animation in seconds
-        float targetY = cam.viewportHeight - (deathUi.getTextButton().getHeight() / 2); // Target Y position for the button
+        float x = (cam.position.x - (deathUi.getTextButton().getWidth() / 2.0f));
+        float duration = 0.8f; // Duration of the animation in seconds
+        float targetY = (cam.viewportHeight / 2.0f) - (deathUi.getTextButton().getHeight() / 2); // Target Y position for the button
         float initialY = 10; // Initial Y position below the screen
-        // TBF: ANIMATION SLIDING UP
         deathUi.getTextButton().setPosition(x, initialY);
         deathUi.getTextButton().addAction(Actions.moveTo(x, targetY, duration));
+        stage.addActor(deathUi.getTextButton());
         stage.act(dt);
 
-        deathUi.getTextButton().addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                dispose();
-                gsm.set(new PlayState(gsm));
-            }
-        });
 
-        stage.addActor(deathUi.getTextButton());
         inputMultiplexer.addProcessor(deathUi.getTextButton().getStage());
 
 //         Removes inputs
@@ -275,7 +287,8 @@ public class PlayState extends State {
         cam.update();
     }
     public void updateGameElements() {
-        pauseButton.setPauseBtnPosition();
+        //
+        pauseButton.getImageButton().setPosition((cam.position.x + (cam.viewportWidth / 2)) - (pauseButton.getImageButton().getWidth() + 10)   , cam.viewportHeight - pauseButton.getImageButton().getHeight() - 10);
         // Reposition Tubes & coins
         repositionTubesAndCoins();
         repositionGround();
@@ -362,6 +375,7 @@ public class PlayState extends State {
         renderGround(sb);
         renderCoins(sb);
         renderScore(sb);
+
         sb.end();
         // Render Flash effect on bird collision
         renderFlashEffect();
@@ -486,6 +500,10 @@ public class PlayState extends State {
 
         sr.end();
 
+    }
+
+    public void endGame() {
+        gsm.set(new PlayState(gsm));
     }
 
 }

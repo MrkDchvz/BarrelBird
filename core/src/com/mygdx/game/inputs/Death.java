@@ -24,14 +24,15 @@ public class Death {
 
     private HighScoreManager highScoreManager;
 
+
+
     public Death () {
         highScoreManager = HighScoreManager.getInstance();
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"));
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = font;
-        float fontSize = 1.5f; // Specify the desired font size
-        textButtonStyle.font.getData().setScale(fontSize / textButtonStyle.font.getScaleX());
         textButton = new TextButton("Tap to retry\nBest: " + highScoreManager.getHighScore(), textButtonStyle);
+
 
     }
 
@@ -48,6 +49,7 @@ public class Death {
     public void dispose() {
         font.dispose();
     }
+
 }
 
 

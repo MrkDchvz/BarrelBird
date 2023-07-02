@@ -7,13 +7,11 @@ public class Play implements InputProcessor {
     private Bird bird;
     private Pause pause;
 
-    private Boolean isDead;
-
     public Play(Bird bird, Pause pause) {
         super();
         this.bird = bird;
         this.pause = pause;
-        isDead = false;
+
     }
 
 
@@ -37,10 +35,7 @@ public class Play implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (bird.isIdle()) {
             bird.setIdle(false);
-        }
-        else if (isDead == true) {
-            System.out.println("Dead");
-        } else if (pause.isPaused() == false) {
+        }  else if (pause.isPaused() == false) {
             bird.jump();
         }
         return true;
@@ -66,9 +61,6 @@ public class Play implements InputProcessor {
         return false;
     }
 
-    public void setDeathState() {
-        isDead = true;
-    }
 
 }
 

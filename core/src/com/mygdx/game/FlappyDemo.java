@@ -44,7 +44,6 @@ public class FlappyDemo extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		super.resize(width, height);
 		gsm.resize(width, height);
 	}
 	

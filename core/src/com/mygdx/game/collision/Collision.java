@@ -21,14 +21,13 @@ public class Collision {
 
     private PlayState playState;
 
-    private Boolean isDead;
 
 //   Coin Collision
     public Collision(Bird bird, Array<Coin> coins, Score score) {
         this.bird = bird;
         this.coins = coins;
         this.score = score;
-        isDead = false;
+
 
 
     }
@@ -37,7 +36,7 @@ public class Collision {
         this.bird = bird;
         this.tubes = tubes;
 
-        isDead = false;
+
 
     }
 //  Ground Collision
@@ -45,7 +44,7 @@ public class Collision {
         this.bird = bird;
         this.playState = playState;
         this.ground = ground;
-        isDead = false;
+
 
 
     }
@@ -61,15 +60,15 @@ public class Collision {
         if (tubes != null) {
             for (Tube tube : tubes) {
                 if (Intersector.overlapConvexPolygons(bird.getPolyBird(), tube.getPolyTopTube()) || Intersector.overlapConvexPolygons(bird.getPolyBird(), tube.getPolyBotTube())) {
-                    return isDead;
+
                 }
             }
             if (ground != null) {
 
-                return isDead;
+                return bird.isDead();
             }
         }
-        return  isDead;
+        return bird.isDead();
     }
     public void updateCollision() {
         if (coins != null) {
@@ -103,14 +102,12 @@ public class Collision {
         }
     }
 
-    public void killBird() {
-        isDead = true;
-    }
+
 
     public  void onCollision() {
 //       play the crash sound when the bird collides.
         bird.collision();
 //      set the isDead to true
-        killBird();
+        bird.killBird();
     }
 }

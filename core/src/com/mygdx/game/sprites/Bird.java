@@ -49,6 +49,8 @@ public class Bird {
 
     private float timeAccumulator;
 
+    private Boolean isDead;
+
 
 
     private Animation<TextureRegion> aliveAnimation;
@@ -68,6 +70,7 @@ public class Bird {
         movement = 100;
         groundLevel = 0;
         isIdle = true;
+        isDead = false;
         timeAccumulator = 0;
 
 
@@ -135,6 +138,12 @@ public class Bird {
     }
 
     public Boolean isIdle() {return isIdle; }
+
+    public Boolean isDead() {return isDead;}
+
+    public void killBird() {
+        this.isDead = true;
+    }
 
 
     public void idle(float dt) {

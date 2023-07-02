@@ -84,6 +84,8 @@ public class PlayState extends State {
 
    private Viewport viewport;
 
+   private HighScoreManager highScoreManager;
+
 
 
     public PlayState(GameStateManager gsm) {
@@ -150,13 +152,15 @@ public class PlayState extends State {
         flashDuration = 0.06f;
         flashIntensity = 1f;
         // Death UI
-        deathUi = new Death();
+        deathUi = new Death(this);
         deathUi.getTextButton().addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
                 endGame();
             }
         });
+        // HighScore Manager
+        highScoreManager = new HighScoreManager();
 
 
 
@@ -173,7 +177,7 @@ public class PlayState extends State {
         if (bird.isIdle()) {
             updateIdleState(dt);
         }
-        else if (groundCollision.isColliding() || tubeCollision.isColliding()) {
+        else if (bird.isDead()) {
             updateDeathState(dt);
         }
         else if (pauseButton.isPaused()) {
@@ -236,11 +240,12 @@ public class PlayState extends State {
         cam.update();
     }
     public void updatePausedState() {
-
         pauseButton.getImageButton().setPosition(cam.position.x - (pauseButton.getImageButton().getWidth() / 2)  , (cam.viewportHeight / 2) - pauseButton.getImageButton().getHeight());
     }
 
     public void updateDeathState(float dt) {
+//        Update clickListener
+       inputMultiplexer.addProcessor(deathUi);
         handleInput();
         // Stops the bird from moving horizontally
         stateTime += dt;
@@ -251,8 +256,11 @@ public class PlayState extends State {
 //         Removes pause button
         pauseButton.getImageButton().remove();
         // Check for new HighScore
-        deathUi.updateHighScore(score.getScore());
-
+        if (highScoreManager.isHighscore(score.getScore())) {
+            highScoreManager.setHighscore(score.getScore());
+            // Assign textButton text to highscore.
+            deathUi.updateHighScoreText(highScoreManager.getHighscore());
+        }
         // add death ui to stage
         float x = (cam.position.x - (deathUi.getTextButton().getWidth() / 2.0f));
         float duration = 0.8f; // Duration of the animation in seconds
@@ -313,6 +321,9 @@ public class PlayState extends State {
         }
     }
 
+    public void updatePlayState() {
+
+    }
 
 
 //    Reposition Methods

@@ -240,7 +240,7 @@ public class PlayState extends State {
         cam.update();
     }
     public void updatePausedState() {
-        pauseButton.getImageButton().setPosition(cam.position.x - (pauseButton.getImageButton().getWidth() / 2)  , (cam.viewportHeight / 2) - pauseButton.getImageButton().getHeight());
+        pauseButton.getImageButton().setPosition(cam.position.x - (pauseButton.getImageButton().getWidth() / 2)  , (cam.viewportHeight / 2) - (pauseButton.getImageButton().getHeight() / 2.0f ));
     }
 
     public void updateDeathState(float dt) {
